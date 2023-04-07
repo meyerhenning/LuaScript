@@ -1,0 +1,70 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+    "id": "9aca4ee0-21e9-461a-a3f3-e3b2bb622126",
+    "name": "Lua",
+    "friendlyName": "Lua Script",
+    "description": "Executes a lua script.",
+    "helpMarkDown": "",
+    "category": "Utility",
+    "author": "Henning Meyer",
+    "version": {
+        "Major": 0,
+        "Minor": 1,
+        "Patch": 2
+    },
+    "instanceNameFormat": "Lua",
+    "inputs": [
+        {
+            "name": "targetType",
+            "type": "radio",
+            "label": "Target type",
+            "defaultValue": "file",
+            "required": false,
+            "helpMarkDown": "The target type: inline or file.",
+            "aliases": ["target"],
+            "options": {
+                "file": "File",
+                "inline": "Inline"
+            }
+        },
+        {
+            "name": "arguments",
+            "type": "string",
+            "label": "Additional arguments",
+            "defaultValue": "",
+            "required": false,
+            "visibleRule": "targetType = file",
+            "helpMarkDown": "The arguments that get passed to the Lua file.",
+            "aliases": ["args"]
+        },
+        {
+            "name": "filePath",
+            "type": "string",
+            "label": "Path of the Lua file",
+            "defaultValue": "",
+            "required": false,
+            "visibleRule": "targetType = file",
+            "helpMarkDown": "The path of the Lua file to execute.",
+            "aliases": ["path"]
+        },
+        {
+            "name": "script",
+            "type": "multiLine",
+            "label": "Raw Lua script",
+            "defaultValue": "",
+            "required": false,
+            "visibleRule": "targetType = inline",
+            "helpMarkDown": "The raw Lua script to execute.",
+            "properties": {
+                "resizable": true,
+                "rows": "15",
+                "maxLength": "15000"
+            }
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "task.js"
+        }
+    }
+}
