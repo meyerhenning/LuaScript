@@ -41,15 +41,29 @@ var fs = require("fs");
 var child_process_1 = require("child_process");
 var path = require("path");
 var uuid = require("uuid");
+var colorYellow = "\x1b[33m";
 var Target;
 (function (Target) {
     Target["FILE"] = "file";
     Target["INLINE"] = "inline";
 })(Target || (Target = {}));
+function handleScriptOutput(err, stdout) {
+    if (err) {
+        tasklib.setResult(tasklib.TaskResult.Failed, err.message);
+    }
+    if (stdout) {
+        console.log("".concat(colorYellow, "%s"), "## Lua Script Output ##");
+        console.log("".concat(colorYellow, "%s"), "=============================================");
+        console.log("");
+        console.log(stdout);
+        console.log("".concat(colorYellow, "%s"), "=============================================");
+        console.log("");
+    }
+}
 function run() {
     var _a, _b, _c, _d, _e, _f;
     return __awaiter(this, void 0, void 0, function () {
-        var args, file, script, target, tempDirectory, colorYellow_1, newFilePath;
+        var args, file, script, target, tempDirectory, newFilePath;
         return __generator(this, function (_g) {
             try {
                 args = (_a = tasklib.getInput("arguments", false)) !== null && _a !== void 0 ? _a : "";
@@ -57,7 +71,6 @@ function run() {
                 script = (_c = tasklib.getInput("script", false)) !== null && _c !== void 0 ? _c : "";
                 target = (_e = (_d = tasklib.getInput("targetType", false)) === null || _d === void 0 ? void 0 : _d.toLowerCase()) !== null && _e !== void 0 ? _e : "";
                 tempDirectory = (_f = tasklib.getVariable("Agent.TempDirectory")) !== null && _f !== void 0 ? _f : "";
-                colorYellow_1 = "\x1b[33m";
                 console.log("");
                 if (target !== Target.FILE && target !== Target.INLINE) {
                     tasklib.setResult(tasklib.TaskResult.Failed, "The provided target type is no valid option. Choose between 'file' and 'inline'.");
@@ -70,20 +83,7 @@ function run() {
                     }
                     console.log("Executing '".concat(file, "'"));
                     console.log("");
-                    (0, child_process_1.exec)("lua '".concat(file, "' ").concat(args), function (err, stdout) {
-                        if (err) {
-                            tasklib.setResult(tasklib.TaskResult.Failed, err.message);
-                        }
-                        if (stdout) {
-                            console.log("".concat(colorYellow_1, "%s"), "## Lua Script Output ##");
-                            console.log("".concat(colorYellow_1, "%s"), "=============================================");
-                            console.log("");
-                            console.log(stdout);
-                            console.log("".concat(colorYellow_1, "%s"), "=============================================");
-                            console.log("");
-                        }
-                    });
-                    tasklib.setResult(tasklib.TaskResult.Succeeded, "Executed script successfully");
+                    (0, child_process_1.exec)("lua '".concat(file, "' ").concat(args), function (err, stdout) { return handleScriptOutput(err, stdout); });
                     return [2 /*return*/];
                 }
                 if (script === "") {
@@ -95,20 +95,7 @@ function run() {
                 console.log("Created '".concat(newFilePath, "' from script"));
                 console.log("Executing '".concat(newFilePath, "'"));
                 console.log("");
-                (0, child_process_1.exec)("lua ".concat(newFilePath), function (err, stdout) {
-                    if (err) {
-                        tasklib.setResult(tasklib.TaskResult.Failed, err.message);
-                    }
-                    if (stdout) {
-                        console.log("".concat(colorYellow_1, "%s"), "## Lua Script Output ##");
-                        console.log("".concat(colorYellow_1, "%s"), "=============================================");
-                        console.log("");
-                        console.log(stdout);
-                        console.log("".concat(colorYellow_1, "%s"), "=============================================");
-                        console.log("");
-                    }
-                });
-                tasklib.setResult(tasklib.TaskResult.Succeeded, "Executed script successfully");
+                (0, child_process_1.exec)("lua ".concat(newFilePath), function (err, stdout) { return handleScriptOutput(err, stdout); });
             }
             catch (err) {
                 tasklib.setResult(tasklib.TaskResult.Failed, err.message);

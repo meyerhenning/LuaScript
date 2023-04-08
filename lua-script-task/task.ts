@@ -1,12 +1,30 @@
 import * as tasklib from "azure-pipelines-task-lib";
 import * as fs from "fs";
-import { exec } from "child_process";
+import { exec, ExecException } from "child_process";
 const path = require("path");
 const uuid = require("uuid");
+
+const colorYellow = "\x1b[33m";
 
 enum Target{
     FILE = "file",
     INLINE = "inline"
+}
+
+function handleScriptOutput(err: ExecException | null, stdout: string)
+{
+    if(err){
+        tasklib.setResult(tasklib.TaskResult.Failed, err.message);
+    }
+
+    if(stdout){
+        console.log(`${colorYellow}%s`, "## Lua Script Output ##");
+        console.log(`${colorYellow}%s`, "=============================================");
+        console.log("");
+        console.log(stdout);
+        console.log(`${colorYellow}%s`, "=============================================");
+        console.log("");
+    }
 }
 
 async function run() {
@@ -17,7 +35,6 @@ async function run() {
         const target = tasklib.getInput("targetType", false)?.toLowerCase() ?? "";
 
         const tempDirectory = tasklib.getVariable("Agent.TempDirectory") ?? "";
-        const colorYellow = "\x1b[33m";
 
         console.log("");
 
@@ -35,24 +52,8 @@ async function run() {
             console.log(`Executing '${file}'`);
             console.log("");
 
-            exec(`lua '${file}' ${args}`, (err, stdout) => {
+            exec(`lua '${file}' ${args}`, (err, stdout) => handleScriptOutput(err, stdout));
 
-                if(err){
-                    tasklib.setResult(tasklib.TaskResult.Failed, err.message);
-                }
-
-                if(stdout)
-                {
-                    console.log(`${colorYellow}%s`, "## Lua Script Output ##");
-                    console.log(`${colorYellow}%s`, "=============================================");
-                    console.log("");
-                    console.log(stdout);
-                    console.log(`${colorYellow}%s`, "=============================================");
-                    console.log("");
-                }
-            });
-
-            tasklib.setResult(tasklib.TaskResult.Succeeded, "Executed script successfully");
             return;
         }
 
@@ -70,24 +71,7 @@ async function run() {
         console.log(`Executing '${newFilePath}'`);
         console.log("");
 
-        exec(`lua ${newFilePath}`, (err, stdout) => {
-
-            if(err){
-                tasklib.setResult(tasklib.TaskResult.Failed, err.message);
-            }
-
-            if(stdout)
-            {
-                console.log(`${colorYellow}%s`, "## Lua Script Output ##");
-                console.log(`${colorYellow}%s`, "=============================================");
-                console.log("");
-                console.log(stdout);
-                console.log(`${colorYellow}%s`, "=============================================");
-                console.log("");
-            }
-        });
-
-        tasklib.setResult(tasklib.TaskResult.Succeeded, "Executed script successfully");
+        exec(`lua ${newFilePath}`, (err, stdout) => handleScriptOutput(err, stdout));
     }
     catch (err: any) {
         tasklib.setResult(tasklib.TaskResult.Failed, err.message);
