@@ -4,13 +4,13 @@
     "name": "Lua",
     "friendlyName": "Lua Script",
     "description": "Executes a lua script.",
-    "helpMarkDown": "",
+    "helpUrl": "https://marketplace.visualstudio.com/items?itemName=HenningMeyer.lua-script",
     "category": "Utility",
     "author": "Henning Meyer",
     "version": {
         "Major": 0,
-        "Minor": 1,
-        "Patch": 2
+        "Minor": 4,
+        "Patch": 0
     },
     "instanceNameFormat": "Lua",
     "inputs": [
