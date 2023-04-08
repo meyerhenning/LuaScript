@@ -61,6 +61,17 @@ Furthermore, the task requires the use of the `lua` command.
 
 Thus, you are responsible for the Lua installation and that the `lua` command can be accessed.
 
+The following section describes how to install Lua on Ubuntu. <br>
+Something like this is necessary if you use a Microsoft-Hosted Pipeline, because Lua is not installed by default.
+
+### Ubuntu Installation
+
+```yml
+steps:
+- script: sudo apt-get install lua5.4
+  displayName: 'Install Lua'
+```
+
 ## Main Dependencies
 - [Azure DevOps Extension SDK](https://github.com/microsoft/azure-devops-extension-sdk)
 - [Azure Pipelines Task Lib](https://github.com/microsoft/azure-pipelines-task-lib)
